@@ -1,4 +1,12 @@
+package reservaTickets;
+
+import java.sql.SQLException;
 import java.util.Scanner;
+//import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+//import org.apache.log4j.PropertyConfigurator;
 /**
  * Reserva de tickets
  * @author Aarón Argüello Villar
@@ -7,8 +15,11 @@ public class ReservaTickets {
 
 	//GLOBAL
 	static Scanner teclado = new Scanner(System.in);
+	private static Logger logger = LogManager.getLogger(ReservaTickets.class);
+	
 	
 	public static void main(String[] args) {
+		//PropertyConfigurator.configure("log4j.properties");
 		reservatickets();
 	}
 	
@@ -29,6 +40,7 @@ public class ReservaTickets {
 		System.out.println("Tiene dos opciones:");
 		System.out.println("Opción 1: Elije que asiento quiere reservar.");
 		System.out.println("Opción 2: El programa elije el primer asiento libre que encuentre.");
+		logger.info("Se ha mostrado el menu inicial del programa.");
 		
 		while(fin) {
 			
@@ -40,6 +52,8 @@ public class ReservaTickets {
 				//Si es 1 es el caso en el que puede elegir el asiento que quiera
 				case 1: 
 					System.out.println("Ha elegido la opción 1.");
+					logger.info("El usuario ha elegido la opción 1.");
+					
 					//Lo mostramos
 					MostrarVagon(vagon);
 					
@@ -49,28 +63,34 @@ public class ReservaTickets {
 					
 					//Comprobamos si la posición es válida
 					posicionValida = ValidarPosicion(vagon, fila, columna);
-					if(posicionValida) {
-						if(!PosicionOcupada(vagon, fila, columna, vacio)) {
-							
-								ElegirAsiento(vagon, fila, columna, reservado);
-								//Lo mostramos
-								MostrarVagon(vagon);
-								System.out.print("Ha reservado asiento en la fila: " + fila);						
-								System.out.println(" y en la columna: " + columna);
-							
-							
-						}else {
-							System.out.println("La posición está ocupada.");
-						}			
-					}else {
+					try {
+						if(posicionValida) {
+							if(!PosicionOcupada(vagon, fila, columna, vacio)) {
+								
+									ElegirAsiento(vagon, fila, columna, reservado);
+									//Lo mostramos
+									MostrarVagon(vagon);
+									System.out.print("Ha reservado asiento en la fila: " + fila);						
+									System.out.println(" y en la columna: " + columna);
+								
+								
+							}else {
+								System.out.println("La posición está ocupada.");
+								logger.warn("La posición introducida por el usuario no es válida (está ocupada).");
+							}
+						}
+						
+					} catch (Exception e) {
 						System.out.println("La posición no es válida.");
-					}
-					
+						logger.error("La posición introducida por el usuario no es válida.");
+			        }
+
 					break;
 					
 				//Si es 2 se le asigna el primer asiento libre encontrado
 				case 2: 
 					System.out.println("Ha elegido la opción 2.");
+					logger.info("El usuario ha elegido la opción 2.");
 					//Lo mostramos
 					MostrarVagon(vagon);
 					AsignarAsientoLibre(vagon, reservado);
@@ -80,6 +100,7 @@ public class ReservaTickets {
 				//Si no es ninguna de las opciones se mostrará el menaje de que no es válido
 				default:
 					System.out.println("¡Opción no válida!");
+					logger.error("La posición introducida por el usuario no es válida.");
 			}	
 		}	
 	}
