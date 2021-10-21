@@ -1,6 +1,5 @@
 package reservaTickets;
 
-import java.sql.SQLException;
 import java.util.Scanner;
 //import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.LogManager;
